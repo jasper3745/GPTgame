@@ -69,6 +69,7 @@ function updateGame() {
       notes.splice(i, 1);
       combo = 0;
       showJudgement("MISS", "red");
+      score -= 100;
       updateScore();
     }
   });
