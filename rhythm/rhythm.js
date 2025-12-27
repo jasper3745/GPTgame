@@ -76,7 +76,6 @@ function updateGame() {
   requestAnimationFrame(updateGame);
 }
 
-/* 🎹 키 누를 때 */
 document.addEventListener("keydown", (e) => {
   if (!gameRunning) return;
   const key = e.key.toUpperCase();
@@ -86,6 +85,7 @@ document.addEventListener("keydown", (e) => {
   laneEl.classList.add("flash");
   setTimeout(() => laneEl.classList.remove("flash"), 100);
 
+  // 현재 눌린 키 라인에 노트가 있는지 확인
   const hitNote = notes.find(
     (note) =>
       note.dataset.lane === key &&
@@ -95,8 +95,9 @@ document.addEventListener("keydown", (e) => {
 
   if (hitNote) {
     hitNote.classList.add("hit");
+
     if (hitNote.dataset.type === "tap") {
-      // 짧은 노트
+      // 🎯 짧은 노트 성공
       score += 100;
       combo++;
       showJudgement("PERFECT!", "lime");
@@ -105,19 +106,22 @@ document.addEventListener("keydown", (e) => {
       updateScore();
       removeNote(hitNote);
     } else {
-      // 🔹 롱노트 시작
+      // 🎯 롱노트 시작
       activeHolds[key] = hitNote;
       showJudgement("HOLD!", "#00ffff");
       createExplosion(laneEl);
       flashJudgeLine();
     }
-  } else if (!activeHolds[key]) {
+
+  } else {
+    // ❌ 현재 라인에 노트가 없으면 MISS + 점수 감소
     combo = 0;
+    score = Math.max(0, score - 100);
     showJudgement("MISS", "red");
-    score -= 100;
     updateScore();
   }
 });
+
 
 /* 🎹 키에서 손 뗄 때 */
 document.addEventListener("keyup", (e) => {
