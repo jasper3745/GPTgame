@@ -7,12 +7,15 @@ const info = document.getElementById("info");
 let box = 20;
 let snake = [];
 let direction = "RIGHT";
-let food;
+let foods = [];
 let score = 0;
 let gameLoop = null;
+let foodSpawnLoop = null;
 let speed = 150;
 let evoStage = 1;
 let color = "#00ff88";
+const MAX_FOOD = 5; // 🍎 한 번에 존재할 수 있는 최대 먹이 수
+const FOOD_INTERVAL = 2000; // 2초마다 새 먹이 등장
 
 /* =============================
    메뉴로 돌아가기
@@ -25,10 +28,10 @@ menuBtn.addEventListener("click", () => {
 });
 
 function stopGame() {
-  if (gameLoop) {
-    clearInterval(gameLoop);
-    gameLoop = null;
-  }
+  if (gameLoop) clearInterval(gameLoop);
+  if (foodSpawnLoop) clearInterval(foodSpawnLoop);
+  gameLoop = null;
+  foodSpawnLoop = null;
 }
 
 /* =============================
@@ -47,19 +50,26 @@ function initGame() {
   evoStage = 1;
   color = "#00ff88";
   speed = 150;
-  spawnFood();
+  foods = [];
+
   stopGame();
+
+  // 🎯 일정 시간마다 먹이 자동 생성
+  foodSpawnLoop = setInterval(spawnFood, FOOD_INTERVAL);
+
   gameLoop = setInterval(draw, speed);
 }
 
 /* =============================
-   먹이 생성
+   먹이 생성 (최대 개수 제한)
 ============================= */
 function spawnFood() {
-  food = {
+  if (foods.length >= MAX_FOOD) return;
+  const newFood = {
     x: Math.floor(Math.random() * 29 + 1) * box,
     y: Math.floor(Math.random() * 29 + 1) * box
   };
+  foods.push(newFood);
 }
 
 /* =============================
@@ -81,17 +91,19 @@ function draw() {
   ctx.fillStyle = "#001122";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // 먹이
-  ctx.fillStyle = "red";
-  ctx.fillRect(food.x, food.y, box, box);
+  // 🍎 모든 먹이 그리기
+  for (const f of foods) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(f.x, f.y, box, box);
+  }
 
-  // 뱀 그리기
+  // 🐍 뱀 그리기
   for (let i = 0; i < snake.length; i++) {
     ctx.fillStyle = i === 0 ? color : "#00aa66";
     ctx.fillRect(snake[i].x, snake[i].y, box, box);
   }
 
-  // 머리 위치
+  // 머리 이동
   let snakeX = snake[0].x;
   let snakeY = snake[0].y;
 
@@ -100,7 +112,7 @@ function draw() {
   if (direction === "RIGHT") snakeX += box;
   if (direction === "DOWN") snakeY += box;
 
-  // 충돌 체크
+  // 충돌
   if (
     snakeX < 0 ||
     snakeY < 0 ||
@@ -115,14 +127,19 @@ function draw() {
     return;
   }
 
-  // 먹이 먹기
-  if (snakeX === food.x && snakeY === food.y) {
-    score++;
-    spawnFood();
-    if (score % 5 === 0) evolveSnake();
-  } else {
-    snake.pop();
+  // 🍎 먹이 먹기
+  let ate = false;
+  for (let i = 0; i < foods.length; i++) {
+    if (snakeX === foods[i].x && snakeY === foods[i].y) {
+      score++;
+      foods.splice(i, 1);
+      ate = true;
+      if (score % 5 === 0) evolveSnake();
+      break;
+    }
   }
+
+  if (!ate) snake.pop(); // 안 먹으면 꼬리 제거
 
   const newHead = { x: snakeX, y: snakeY };
   snake.unshift(newHead);
@@ -151,8 +168,8 @@ function evolveSnake() {
     speed -= 15;
     stopGame();
     gameLoop = setInterval(draw, speed);
+    foodSpawnLoop = setInterval(spawnFood, FOOD_INTERVAL);
   }
   const colors = ["#00ff88", "#00bfff", "#ffcc00", "#ff6600", "#ff00cc"];
   color = colors[(evoStage - 1) % colors.length];
 }
-
