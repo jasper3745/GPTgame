@@ -70,6 +70,7 @@ function updateGame() {
       combo = 0;
       showJudgement("MISS", "red");
       updateScore();
+      score -= 100;
     }
   });
 
