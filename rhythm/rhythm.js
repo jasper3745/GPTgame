@@ -11,7 +11,7 @@ let notes = [];
 let score = 0;
 let combo = 0;
 let gameRunning = false;
-let fallSpeed = 5;
+let fallSpeed = 10;
 let spawnInterval;
 let activeHolds = {}; // 현재 누르고 있는 롱노트 추적
 
@@ -70,7 +70,6 @@ function updateGame() {
       combo = 0;
       showJudgement("MISS", "red");
       updateScore();
-      score -= 100;
     }
   });
 
@@ -115,6 +114,7 @@ document.addEventListener("keydown", (e) => {
   } else if (!activeHolds[key]) {
     combo = 0;
     showJudgement("MISS", "red");
+    screen -= 100;
     updateScore();
   }
 });
