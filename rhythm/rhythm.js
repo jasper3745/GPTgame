@@ -42,20 +42,20 @@ function spawnNote() {
   note.dataset.lane = lane;
   note.y = 0;
 
-  // 🔹 일정 확률로 롱노트 생성
-  if (Math.random() < 0.2) {
-    note.dataset.type = "hold";
-    note.dataset.length = Math.floor(100 + Math.random() * 200); // 길이 랜덤
-    note.style.height = `${note.dataset.length}px`;
-    note.style.background = "linear-gradient(#00bfff, #00ffaa)";
-  } else {
-    note.dataset.type = "tap";
-    note.dataset.length = 20;
-  }
+//   // 🔹 일정 확률로 롱노트 생성
+//   if (Math.random() < 0.2) {
+//     note.dataset.type = "hold";
+//     note.dataset.length = Math.floor(100 + Math.random() * 200); // 길이 랜덤
+//     note.style.height = `${note.dataset.length}px`;
+//     note.style.background = "linear-gradient(#00bfff, #00ffaa)";
+//   } else {
+//     note.dataset.type = "tap";
+//     note.dataset.length = 20;
+//   }
 
-  laneEl.appendChild(note);
-  notes.push(note);
-}
+//   laneEl.appendChild(note);
+//   notes.push(note);
+// }
 
 function updateGame() {
   if (!gameRunning) return;
@@ -106,13 +106,13 @@ document.addEventListener("keydown", (e) => {
       flashJudgeLine();
       updateScore();
       removeNote(hitNote);
-    } else {
-      // 🎯 롱노트 시작
-      activeHolds[key] = hitNote;
-      showJudgement("HOLD!", "#00ffff");
-      createExplosion(laneEl);
-      flashJudgeLine();
-    }
+     } //else {
+    //   // 🎯 롱노트 시작
+    //   activeHolds[key] = hitNote;
+    //   showJudgement("HOLD!", "#00ffff");
+    //   createExplosion(laneEl);
+    //   flashJudgeLine();
+    // }
 
   } else {
     // ❌ 현재 라인에 노트가 없으면 MISS + 점수 감소
@@ -132,18 +132,18 @@ document.addEventListener("keyup", (e) => {
   const holdNote = activeHolds[key];
   const laneEl = document.getElementById("lane" + key);
 
-  // 🔹 롱노트 끝 (놓을 때 판정)
-  const noteBottom = holdNote.y + parseInt(holdNote.dataset.length);
-  if (noteBottom > 450 && noteBottom < 550) {
-    score += 200;
-    combo++;
-    showJudgement("PERFECT END!", "aqua");
-    createExplosion(laneEl);
-    flashJudgeLine();
-  } else {
-    combo = 0;
-    showJudgement("MISS", "red");
-  }
+  // // 🔹 롱노트 끝 (놓을 때 판정)
+  // const noteBottom = holdNote.y + parseInt(holdNote.dataset.length);
+  // if (noteBottom > 450 && noteBottom < 550) {
+  //   score += 200;
+  //   combo++;
+  //   showJudgement("PERFECT END!", "aqua");
+  //   createExplosion(laneEl);
+  //   flashJudgeLine();
+  // } else {
+  //   combo = 0;
+  //   showJudgement("MISS", "red");
+  // }
 
   updateScore();
   removeNote(holdNote);
