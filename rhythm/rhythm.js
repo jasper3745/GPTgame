@@ -114,7 +114,7 @@ document.addEventListener("keydown", (e) => {
   } else if (!activeHolds[key]) {
     combo = 0;
     showJudgement("MISS", "red");
-    screen -= 100;
+    score -= 100;
     updateScore();
   }
 });
