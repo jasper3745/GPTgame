@@ -5,6 +5,7 @@ const startBtn = document.getElementById("startBtn");
 const music = document.getElementById("music");
 const judgementText = document.getElementById("judgement");
 const judgeLine = document.getElementById("judge-line");
+const difficultySelect = document.getElementById("difficulty");
 
 let lanes = ["A", "S", "D"];
 let notes = [];
@@ -12,41 +13,87 @@ let score = 0;
 let combo = 0;
 let gameRunning = false;
 let fallSpeed = 10;
-let spawnInterval;
+let nextNoteTimeout;
+
+let currentDifficulty = "normal"; // 기본 난이도
 
 startBtn.addEventListener("click", startGame);
+difficultySelect.addEventListener("change", (e) => {
+  currentDifficulty = e.target.value;
+});
+
+/* 🎮 난이도별 설정값 */
+function getDifficultySettings() {
+  switch (currentDifficulty) {
+    case "easy":
+      return { fallSpeed: 7, minDelay: 800, maxDelay: 1400, prob2: 0.15, prob3: 0.02 };
+    case "hard":
+      return { fallSpeed: 12, minDelay: 300, maxDelay: 700, prob2: 0.4, prob3: 0.15 };
+    default: // normal
+      return { fallSpeed: 10, minDelay: 400, maxDelay: 1000, prob2: 0.25, prob3: 0.05 };
+  }
+}
 
 function startGame() {
   if (gameRunning) return;
   gameRunning = true;
   score = 0;
   combo = 0;
+  notes = [];
   updateScore();
-  message.textContent = "🎵 위에서 내려오는 노트를 맞춰!";
+
+  message.textContent = `🎵 ${currentDifficulty.toUpperCase()} 난이도 - 노트를 맞춰라!`;
   startBtn.style.display = "none";
+  difficultySelect.style.display = "none";
 
   music.currentTime = 0;
   music.play();
 
-  spawnInterval = setInterval(spawnNote, 900);
+  const settings = getDifficultySettings();
+  fallSpeed = settings.fallSpeed;
+
+  spawnNoteRandom();
   requestAnimationFrame(updateGame);
 }
 
-function spawnNote() {
-  const lane = lanes[Math.floor(Math.random() * lanes.length)];
-  const laneEl = document.getElementById("lane" + lane);
+/* 🎵 랜덤 타이밍 + 다중 노트 생성 */
+function spawnNoteRandom() {
+  if (!gameRunning) return;
 
-  const note = document.createElement("div");
-  note.classList.add("note");
-  note.dataset.lane = lane;
-  note.dataset.type = "tap";
-  note.dataset.length = 20;
-  note.y = 0;
+  const settings = getDifficultySettings();
 
-  laneEl.appendChild(note);
-  notes.push(note);
+  // 확률 기반 동시 노트 개수
+  const rand = Math.random();
+  let noteCount;
+  if (rand < 1 - settings.prob2 - settings.prob3) noteCount = 1;
+  else if (rand < 1 - settings.prob3) noteCount = 2;
+  else noteCount = 3;
+
+  const usedLanes = [];
+
+  for (let i = 0; i < noteCount; i++) {
+    const availableLanes = lanes.filter(l => !usedLanes.includes(l));
+    if (availableLanes.length === 0) break;
+
+    const lane = availableLanes[Math.floor(Math.random() * availableLanes.length)];
+    usedLanes.push(lane);
+
+    const laneEl = document.getElementById("lane" + lane);
+    const note = document.createElement("div");
+    note.classList.add("note");
+    note.dataset.lane = lane;
+    note.y = 0;
+
+    laneEl.appendChild(note);
+    notes.push(note);
+  }
+
+  // 랜덤 딜레이
+  const nextDelay = Math.random() * (settings.maxDelay - settings.minDelay) + settings.minDelay;
+  nextNoteTimeout = setTimeout(spawnNoteRandom, nextDelay);
 }
 
+/* 🎮 게임 루프 */
 function updateGame() {
   if (!gameRunning) return;
 
@@ -58,8 +105,8 @@ function updateGame() {
       note.remove();
       notes.splice(i, 1);
       combo = 0;
-      showJudgement("MISS", "red");
       score = Math.max(0, score - 100);
+      showJudgement("MISS", "red");
       updateScore();
     }
   });
@@ -67,7 +114,7 @@ function updateGame() {
   requestAnimationFrame(updateGame);
 }
 
-/* 🎹 키 누를 때 */
+/* 🎹 키 입력 */
 document.addEventListener("keydown", (e) => {
   if (!gameRunning) return;
   const key = e.key.toUpperCase();
@@ -85,7 +132,6 @@ document.addEventListener("keydown", (e) => {
   );
 
   if (hitNote) {
-    // 🎯 짧은 노트 성공
     score += 100;
     combo++;
     showJudgement("PERFECT!", "lime");
@@ -94,7 +140,6 @@ document.addEventListener("keydown", (e) => {
     updateScore();
     removeNote(hitNote);
   } else {
-    // ❌ 잘못된 타이밍
     combo = 0;
     score = Math.max(0, score - 100);
     showJudgement("MISS", "red");
@@ -102,6 +147,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+/* ⚙️ 헬퍼 함수들 */
 function removeNote(note) {
   note.remove();
   notes = notes.filter((n) => n !== note);
@@ -118,7 +164,6 @@ function showJudgement(text, color) {
   setTimeout(() => judgementText.classList.remove("show"), 300);
 }
 
-/* 💥 폭발 이펙트 */
 function createExplosion(laneEl) {
   const explosion = document.createElement("div");
   explosion.classList.add("explosion");
@@ -128,15 +173,16 @@ function createExplosion(laneEl) {
   setTimeout(() => explosion.remove(), 400);
 }
 
-/* ⚡ 판정선 빛 효과 */
 function flashJudgeLine() {
   judgeLine.classList.add("glow");
   setTimeout(() => judgeLine.classList.remove("glow"), 150);
 }
 
+/* 🎵 음악 끝 */
 music.addEventListener("ended", () => {
-  clearInterval(spawnInterval);
+  clearTimeout(nextNoteTimeout);
   gameRunning = false;
   message.textContent = `🎵 게임 종료! 총 점수: ${score}`;
   startBtn.style.display = "inline-block";
+  difficultySelect.style.display = "inline-block";
 });
