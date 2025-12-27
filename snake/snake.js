@@ -1,8 +1,8 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const startBtn = document.getElementById("startBtn");
-const menuBtn = document.getElementById("menuBtn");
 const info = document.getElementById("info");
+const backBtn = document.getElementById("backToMenu");
 
 let box = 20;
 let snake = [];
@@ -20,11 +20,8 @@ const FOOD_INTERVAL = 2000; // 2초마다 새 먹이 등장
 /* =============================
    메뉴로 돌아가기
 ============================= */
-menuBtn.addEventListener("click", () => {
-  stopGame();
-  canvas.style.display = "none";
-  startBtn.style.display = "inline-block";
-  info.textContent = "점수: 0 | 진화 단계: 1";
+backBtn.addEventListener("click", () => {
+  window.location.href = "../index.html";
 });
 
 function stopGame() {

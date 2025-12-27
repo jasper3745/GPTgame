@@ -232,6 +232,6 @@ function gameLoop() {
 }
 
 backBtn.addEventListener("click", () => {
-  window.location.href = "../menu.html";
+  window.location.href = "../index.html";
 });
 

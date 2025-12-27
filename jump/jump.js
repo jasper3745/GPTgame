@@ -22,7 +22,7 @@ let movingRight = false;
 const moveSpeed = 4;
 
 backBtn.addEventListener("click", () => {
-  window.location.href = "../menu.html";
+  window.location.href = "../index.html";
 });
 
 startBtn.addEventListener("click", startGame);
