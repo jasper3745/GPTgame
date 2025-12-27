@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎵 리듬게임 - 비트 & 빛 효과 버전</title>
+  <link rel="stylesheet" href="rhythm.css" />
+</head>
+<body>
+  <h1>🎶 리듬게임</h1>
+  <p id="message">A / S / D 키로 판정선에 맞춰 눌러!</p>
+  <p id="score">점수: 0 | 콤보: 0</p>
+
+<div id="game-area">
+  <div class="lane" id="laneA">A</div>
+  <div class="lane" id="laneS">S</div>
+  <div class="lane" id="laneD">D</div>
+  <div id="judge-line"></div>
+  <div id="judgement"></div>
+</div>
+
+<button id="startBtn">🎮 시작하기</button>
+
+<audio id="music" src="https://cdn.pixabay.com/download/audio/2022/10/24/audio_c7ad9a1b86.mp3?filename=funky-11219.mp3"></audio>
+
+<script src="rhythm.js"></script>
+
+  <button id="backToMenu">🏠 메뉴로 돌아가기</button>
+
+<script>
+  document.getElementById("backToMenu").addEventListener("click", () => {
+    window.location.href = "../menu.html";
+  });
+</script>
+
+</body>
+</html>

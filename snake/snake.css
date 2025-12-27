@@ -1,0 +1,51 @@
+body {
+  background: radial-gradient(circle, #000010, #002244);
+  color: white;
+  font-family: "Noto Sans KR", sans-serif;
+  text-align: center;
+  margin: 0;
+}
+
+#title {
+  font-size: 2rem;
+  margin-top: 15px;
+  text-shadow: 0 0 10px #00ff88;
+}
+
+#game {
+  background: #001122;
+  border: 3px solid #00ff88;
+  margin: 20px auto;
+  display: none;
+}
+
+#info {
+  font-size: 1.1rem;
+}
+
+button {
+  background: #00ff88;
+  border: none;
+  border-radius: 10px;
+  color: black;
+  font-size: 1.1rem;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00ff88;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #00cc77;
+  transform: scale(1.05);
+}
+
+#menuBtn {
+  background: #ff4444;
+  color: white;
+  box-shadow: 0 0 10px #ff4444;
+}
+#menuBtn:hover {
+  background: #cc3333;
+}

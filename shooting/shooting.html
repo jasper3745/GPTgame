@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔫 총쏘기 게임</title>
+  <link rel="stylesheet" href="shooting.css" />
+</head>
+<body>
+  <h1>🎯 총쏘기 게임</h1>
+
+  <div class="controls">
+    <label for="difficulty">난이도:</label>
+    <select id="difficulty">
+      <option value="easy">쉬움</option>
+      <option value="normal" selected>보통</option>
+      <option value="hard">어려움</option>
+    </select>
+    <button id="reset">🏁 최고점수 리셋</button>
+  </div>
+
+  <p id="score">점수: 0 | 최고점수: 0</p>
+  <div id="game-area"></div>
+  <p id="message">적을 클릭해서 맞춰봐!</p>
+
+  <!-- 🔫 총소리 효과 -->
+  <audio id="gunSound" src="https://actions.google.com/sounds/v1/impact/metal_clank.ogg"></audio>
+
+  <script src="shooting.js"></script>
+
+    <button id="backToMenu">🏠 메뉴로 돌아가기</button>
+
+<script>
+  document.getElementById("backToMenu").addEventListener("click", () => {
+    window.location.href = "../menu.html";
+  });
+</script>
+
+</body>
+</html>
